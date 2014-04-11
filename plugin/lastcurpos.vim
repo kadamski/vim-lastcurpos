@@ -10,16 +10,21 @@ if !exists("g:lastcurpos_ignoresignature")
     let g:lastcurpos_ignoresignature = 1
 endif
 
+if !exists("g:lastcurpos_onlylinechange")
+    let g:lastcurpos_onlylinechange = 1
+endif
+
 " b:lastcurpos_lastpos - position of the cursor before change
 " b:lastcurpos_saved   - position of the cursor now
 function! lastcurpos#UpdateLastCurMark()
-    if exists("b:lastcurpos_saved")
+    let pos = getpos(".")
+    if exists("b:lastcurpos_saved") && (!g:lastcurpos_onlylinechange || pos[1]!=b:lastcurpos_saved[1])
         if g:lastcurpos_mark != ""
             call setpos("'" . g:lastcurpos_mark, b:lastcurpos_saved)
         endif
         let b:lastcurpos_lastpos = b:lastcurpos_saved
     endif
-    let b:lastcurpos_saved = getpos(".")
+    let b:lastcurpos_saved = pos
 endfunction
 
 function! lastcurpos#JumpToLast()
